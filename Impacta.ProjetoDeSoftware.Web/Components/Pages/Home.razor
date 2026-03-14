@@ -1,7 +1,95 @@
 ﻿@page "/"
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Programa de Treino</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="home-container">
+    <h1 class="title">Gerenciador de Treino</h1>
+    <p class="subtitle">Organize seus treinos de forma prática e eficiente</p>
 
-Welcome to your new app.
+    <div class="card-grid">
+        <div class="card">
+            <h3>📋 Cadastrar Cliente</h3>
+            <p>Cadastre um novo aluno.</p>
+            <NavLink class="nav-link" href="cadastrar-cliente">
+                <button class="btn">
+                    <span class="bi bi-list-nested" aria-hidden="true"></span> Cadastrar cliente
+                </button>
+            </NavLink>
+        </div>
+        @* <div class="card">
+            <h3>📋 Meus Treinos</h3>
+            <p>Veja e edite sua lista de treinos cadastrados.</p>
+            <button class="btn">Acessar</button>
+        </div>
+
+        <div class="card">
+            <h3>➕ Novo Treino</h3>
+            <p>Cadastre um novo treino personalizado.</p>
+            <button class="btn">Cadastrar</button>
+        </div>
+
+        <div class="card">
+            <h3>📊 Relatórios</h3>
+            <p>Acompanhe seu progresso e estatísticas.</p>
+            <button class="btn">Visualizar</button>
+        </div> *@
+    </div>
+</div>
+
+<style>
+    .home-container {
+        text-align: center;
+        padding: 40px;
+        background: linear-gradient(135deg, #1e3c72, #2a5298);
+        color: #fff;
+        min-height: 100vh;
+    }
+
+    .title {
+        font-size: 3rem;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+
+    .subtitle {
+        font-size: 1.2rem;
+        margin-bottom: 40px;
+        opacity: 0.9;
+    }
+
+    .card-grid {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .card {
+        background: #fff;
+        color: #333;
+        border-radius: 10px;
+        padding: 20px;
+        width: 250px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        transition: transform 0.2s;
+    }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+    .btn {
+        margin-top: 15px;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        background: #2a5298;
+        color: #fff;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+        .btn:hover {
+            background: #1e3c72;
+        }
+</style>

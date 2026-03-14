@@ -5,62 +5,134 @@
 @inject ClienteService clienteService
 @rendermode InteractiveServer
 
-<h3>Cadastrar Cliente</h3>
+<PageTitle>Cadastrar Cliente</PageTitle>
+<div class="form-container">
+    <h1 class="form-title">📝 Cadastro de Cliente</h1>
 
-<EditForm Model="@cliente" OnValidSubmit="@SalvarCliente" FormName="CadastroCliente">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+    <EditForm Model="@cliente" OnValidSubmit="@SalvarCliente" FormName="CadastroCliente" class="styled-form">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
 
-    <p role="status">Current: @cliente.Nome</p>
+        <div class="form-group">
+            <label for="nome">Nome:</label>
+            <InputText id="nome" @bind-Value="cliente.Nome" class="input-field" />
+        </div>
 
-    <div>
-        <label>Nome:</label>
-        <InputText @bind-Value="cliente.Nome" DisplayName="CadastroClienteNome" />
-    </div>
-    <div>
-        <label>Email:</label>
-        <InputText @bind-Value="cliente.Email" />
-    </div>
-    <div>
-        <label>Telefone:</label>
-        <InputText @bind-Value="cliente.Telefone" />
-    </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <InputText id="email" @bind-Value="cliente.Email" class="input-field" />
+        </div>
 
-    <button type="submit">Salvar</button>
-</EditForm>
+        <div class="form-group">
+            <label for="telefone">Telefone:</label>
+            <InputText id="telefone" @bind-Value="cliente.Telefone" class="input-field" />
+        </div>
 
-<h3>Lista de Clientes</h3>
-<ul>
-    @foreach (var c in clientes)
+        <button type="submit" class="btn-submit">Salvar</button>
+    </EditForm>
+
+    @if (!string.IsNullOrEmpty(mensagemSucesso))
     {
-        <li>@c.Nome - @c.Email - @c.Telefone</li>
+        <div class="success-message">@mensagemSucesso</div>
     }
-</ul>
-
+</div>
+   
+    
 @code {
     private Cliente cliente = new Cliente();
-    private List<Cliente> clientes = new();
-
-    protected override async Task OnInitializedAsync()
-    {
-        clientes = await clienteService.GetClientesAsync();
-    }
+    private string mensagemSucesso = string.Empty;
 
     private async Task SalvarCliente()
     {
         Console.WriteLine($"Nome: {cliente.Nome}, Email: {cliente.Email}, Telefone: {cliente.Telefone}");
         
         var novoCliente = await clienteService.AdicionarCliente(cliente);
-        clientes.Add(novoCliente);
-        cliente = new Cliente(); //limpa o formulário
-    }
-
-    public class ClienteTela
-    {
         
-        public string Nome { get; set; }
-        public string Email { get; set; }
-        public string Telefone { get; set; }
+        mensagemSucesso = $"✅ Cliente \"{novoCliente.Nome}\" cadastrado com sucesso!";
+        
+        cliente = new Cliente(); //limpa o formulário
     }
 }
 
+<style>
+    .form-container {
+        max-width: 500px;
+        margin: 50px auto;
+        padding: 30px;
+        background: #f9f9f9;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .form-title {
+        text-align: center;
+        font-size: 2rem;
+        margin-bottom: 20px;
+        color: #2a5298;
+        font-weight: bold;
+    }
+
+    .styled-form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+    }
+
+        .form-group label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+    .input-field {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 1rem;
+    }
+
+        .input-field:focus {
+            border-color: #2a5298;
+            outline: none;
+            box-shadow: 0 0 5px rgba(42,82,152,0.5);
+        }
+
+    .btn-submit {
+        padding: 12px;
+        background: #2a5298;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+
+        .btn-submit:hover {
+            background: #1e3c72;
+        }
+        
+        .success-message {
+        margin-top: 20px;
+        padding: 15px;
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+        border-radius: 6px;
+        font-weight: bold;
+        text-align: center;
+        animation: fadeIn 0.8s ease-in-out;
+    }
+
+    @@keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>

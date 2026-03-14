@@ -1,0 +1,94 @@
+﻿@page "/clientes"
+@using Impacta.ProjetoDeSoftware.Web.Services
+@using Impacta.ProjetoDeSoftware.Web.Models
+@inject ClienteService clienteService
+
+<PageTitle>Lista de Clientes</PageTitle>
+
+<div class="clientes-container">
+    <h1 class="title">📋 Lista de Clientes</h1>
+
+    @if (clientes == null || clientes.Count == 0)
+    {
+        <p class="empty-msg">Nenhum cliente cadastrado ainda.</p>
+    }
+    else
+    {
+        <table class="clientes-table">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Email</th>
+                    <th>Telefone</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var c in clientes)
+                {
+                    <tr>
+                        <td>@c.Nome</td>
+                        <td>@c.Email</td>
+                        <td>@c.Telefone</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+@code {
+    private List<Cliente> clientes = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        clientes = await clienteService.GetClientesAsync();
+    }
+}
+
+<style>
+    .clientes-container {
+        padding: 40px;
+        background: #f5f7fa;
+        min-height: 100vh;
+    }
+
+    .title {
+        text-align: center;
+        font-size: 2.5rem;
+        margin-bottom: 30px;
+        color: #2a5298;
+        font-weight: bold;
+    }
+
+    .empty-msg {
+        text-align: center;
+        font-size: 1.2rem;
+        color: #777;
+    }
+
+    .clientes-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+        .clientes-table th {
+            background: #2a5298;
+            color: #fff;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .clientes-table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .clientes-table tr:hover {
+            background: #f0f4ff;
+        }
+</style>
+
