@@ -1,0 +1,66 @@
+﻿@using Impacta.ProjetoDeSoftware.Web.Models
+@using Impacta.ProjetoDeSoftware.Web.Services
+@using Microsoft.AspNetCore.Components.Forms
+@page "/cadastrar-cliente"
+@inject ClienteService clienteService
+@rendermode InteractiveServer
+
+<h3>Cadastrar Cliente</h3>
+
+<EditForm Model="@cliente" OnValidSubmit="@SalvarCliente" FormName="CadastroCliente">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <p role="status">Current: @cliente.Nome</p>
+
+    <div>
+        <label>Nome:</label>
+        <InputText @bind-Value="cliente.Nome" DisplayName="CadastroClienteNome" />
+    </div>
+    <div>
+        <label>Email:</label>
+        <InputText @bind-Value="cliente.Email" />
+    </div>
+    <div>
+        <label>Telefone:</label>
+        <InputText @bind-Value="cliente.Telefone" />
+    </div>
+
+    <button type="submit">Salvar</button>
+</EditForm>
+
+<h3>Lista de Clientes</h3>
+<ul>
+    @foreach (var c in clientes)
+    {
+        <li>@c.Nome - @c.Email - @c.Telefone</li>
+    }
+</ul>
+
+@code {
+    private Cliente cliente = new Cliente();
+    private List<Cliente> clientes = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        clientes = await clienteService.GetClientesAsync();
+    }
+
+    private async Task SalvarCliente()
+    {
+        Console.WriteLine($"Nome: {cliente.Nome}, Email: {cliente.Email}, Telefone: {cliente.Telefone}");
+        
+        var novoCliente = await clienteService.AdicionarCliente(cliente);
+        clientes.Add(novoCliente);
+        cliente = new Cliente(); //limpa o formulário
+    }
+
+    public class ClienteTela
+    {
+        
+        public string Nome { get; set; }
+        public string Email { get; set; }
+        public string Telefone { get; set; }
+    }
+}
+
