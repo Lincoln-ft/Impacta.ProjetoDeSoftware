@@ -1,6 +1,4 @@
 <Solution>
-  <Project Path="Impacta.ProjetoDeSoftware.ApiService/Impacta.ProjetoDeSoftware.ApiService.csproj" />
-  <Project Path="Impacta.ProjetoDeSoftware.AppHost/Impacta.ProjetoDeSoftware.AppHost.csproj" />
   <Project Path="Impacta.ProjetoDeSoftware.ServiceDefaults/Impacta.ProjetoDeSoftware.ServiceDefaults.csproj" />
   <Project Path="Impacta.ProjetoDeSoftware.Web/Impacta.ProjetoDeSoftware.Web.csproj" />
 </Solution>
