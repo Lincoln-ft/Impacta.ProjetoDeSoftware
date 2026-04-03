@@ -1,47 +1,46 @@
-﻿@page "/clientes"
+﻿@page "/exercicios"
 @using Impacta.ProjetoDeSoftware.Web.Services
 @using Impacta.ProjetoDeSoftware.Web.Models
-@inject ClienteService clienteService
+@inject ExercicioService service
 
-<PageTitle>Lista de Clientes</PageTitle>
+<PageTitle>Lista de Exercícios</PageTitle>
 
-<div class="clientes-container">
-    
-    <h1 class="title">📋 Lista de Clientes</h1>
-    
+<div class="exercicios-container">
+    <h1 class="title">💪 Lista de Exercícios</h1>
+
     <div class="card-actions">
         <div class="card">
-            <h3>➕ Novo Cliente</h3>
-            <p>Cadastre um novo aluno.</p>
-            <NavLink class="nav-link" href="cadastrar-cliente">
+            <h3>➕ Novo Exercício</h3>
+            <p>Cadastre um novo exercício.</p>
+            <NavLink class="nav-link" href="cadastrar-exercicio">
                 <button class="btn">
-                    <span class="bi bi-person-plus" aria-hidden="true"></span> Cadastrar Cliente
+                    <span class="bi bi-plus-circle" aria-hidden="true"></span> Cadastrar Exercício
                 </button>
             </NavLink>
         </div>
     </div>
 
-    @if (clientes == null || clientes.Count == 0)
+    @if (exercicios == null || exercicios.Count == 0)
     {
-        <p class="empty-msg">Nenhum cliente cadastrado ainda.</p>
+        <p class="empty-msg">Nenhum exercício cadastrado ainda.</p>
     }
     else
     {
-        <table class="clientes-table">
+        <table class="exercicios-table">
             <thead>
                 <tr>
                     <th>Nome</th>
-                    <th>Email</th>
-                    <th>Telefone</th>
+                    <th>Link do Vídeo</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var c in clientes)
+                @foreach (var e in exercicios)
                 {
                     <tr>
-                        <td>@c.Nome</td>
-                        <td>@c.Email</td>
-                        <td>@c.Telefone</td>
+                        <td>@e.Nome</td>
+                        <td>
+                            <a href="@e.LinkVideo" target="_blank" class="video-link">Assistir</a>
+                        </td>
                     </tr>
                 }
             </tbody>
@@ -50,16 +49,16 @@
 </div>
 
 @code {
-    private List<Cliente> clientes = new();
+    private List<Exercicio> exercicios = new();
 
     protected override async Task OnInitializedAsync()
     {
-        clientes = await clienteService.GetClientesAsync();
+        exercicios = await service.GetExerciciosAsync();
     }
 }
 
 <style>
-    .clientes-container {
+    .exercicios-container {
         padding: 40px;
         background: #f5f7fa;
         min-height: 100vh;
@@ -73,6 +72,29 @@
         font-weight: bold;
     }
 
+    .exercicios-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+    }
+
+    .exercicio-card {
+        background: #fff;
+        border-radius: 10px;
+        padding: 20px;
+        width: 320px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+
+    .video-wrapper {
+        margin-top: 15px;
+    }
+
+    iframe {
+        border-radius: 8px;
+    }
     .card-actions {
         display: flex;
         justify-content: center;
@@ -90,9 +112,9 @@
         text-align: center;
     }
 
-    .card:hover {
-        transform: scale(1.05);
-    }
+        .card:hover {
+            transform: scale(1.05);
+        }
 
     .btn {
         margin-top: 15px;
@@ -105,9 +127,9 @@
         font-weight: bold;
     }
 
-    .btn:hover {
-        background: #1e3c72;
-    }
+        .btn:hover {
+            background: #1e3c72;
+        }
 
     .empty-msg {
         text-align: center;
@@ -115,7 +137,7 @@
         color: #777;
     }
 
-    .clientes-table {
+    .exercicios-table {
         width: 100%;
         border-collapse: collapse;
         background: #fff;
@@ -124,20 +146,29 @@
         overflow: hidden;
     }
 
-        .clientes-table th {
+        .exercicios-table th {
             background: #2a5298;
             color: #fff;
             padding: 12px;
             text-align: left;
         }
 
-        .clientes-table td {
+        .exercicios-table td {
             padding: 12px;
             border-bottom: 1px solid #ddd;
         }
 
-        .clientes-table tr:hover {
+        .exercicios-table tr:hover {
             background: #f0f4ff;
         }
-</style>
 
+    .video-link {
+        color: #2a5298;
+        font-weight: bold;
+        text-decoration: none;
+    }
+
+        .video-link:hover {
+            text-decoration: underline;
+        }
+</style>

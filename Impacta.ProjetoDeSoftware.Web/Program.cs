@@ -25,8 +25,9 @@ builder.Services.AddHttpClient<WeatherApiClient>(client =>
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// registra o ClienteService como Scoped
+// registra os Serviços como Scoped
 builder.Services.AddScoped<ClienteService>();
+builder.Services.AddScoped<ExercicioService>();
 
 var app = builder.Build();
 
