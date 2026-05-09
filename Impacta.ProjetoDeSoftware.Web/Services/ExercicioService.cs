@@ -25,4 +25,16 @@ public class ExercicioService
 
         return exercicio;
     }
+
+    public async Task<bool> ExcluirExercicio(int id)
+    {
+        var exercicio = await _context.Exercicio.FindAsync(id);
+        if (exercicio == null) return false;
+
+        _context.Exercicio.Remove(exercicio);
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
 }
+

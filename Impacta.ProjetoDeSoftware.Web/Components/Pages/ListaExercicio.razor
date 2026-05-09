@@ -2,6 +2,8 @@
 @using Impacta.ProjetoDeSoftware.Web.Services
 @using Impacta.ProjetoDeSoftware.Web.Models
 @inject ExercicioService service
+@inject IJSRuntime JS
+@rendermode InteractiveServer
 
 <PageTitle>Lista de Exercícios</PageTitle>
 
@@ -31,15 +33,21 @@
                 <tr>
                     <th>Nome</th>
                     <th>Link do Vídeo</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var e in exercicios)
+                @foreach (var itemExercicio in exercicios)
                 {
                     <tr>
-                        <td>@e.Nome</td>
+                        <td>@itemExercicio.Nome</td>
                         <td>
-                            <a href="@e.LinkVideo" target="_blank" class="video-link">Assistir</a>
+                            <a href="@itemExercicio.LinkVideo" target="_blank" class="video-link">Assistir</a>
+                        </td>
+                        <td>
+                           <button class="btn-delete" @onclick="() => ExcluirExercicio(itemExercicio.Id)">
+                                ❌ Excluir
+                            </button>
                         </td>
                     </tr>
                 }
@@ -55,6 +63,16 @@
     {
         exercicios = await service.GetExerciciosAsync();
     }
+    
+    private async Task ExcluirExercicio(int id)
+    {
+        var sucesso = await service.ExcluirExercicio(id);
+        if (sucesso)
+        {
+            exercicios = exercicios.Where(e => e.Id != id).ToList();
+        }
+    }
+    
 }
 
 <style>
@@ -111,10 +129,9 @@
         transition: transform 0.2s;
         text-align: center;
     }
-
-        .card:hover {
-            transform: scale(1.05);
-        }
+    .card:hover {
+        transform: scale(1.05);
+    }
 
     .btn {
         margin-top: 15px;
@@ -126,10 +143,9 @@
         cursor: pointer;
         font-weight: bold;
     }
-
-        .btn:hover {
-            background: #1e3c72;
-        }
+    .btn:hover {
+        background: #1e3c72;
+    }
 
     .empty-msg {
         text-align: center;
@@ -145,30 +161,40 @@
         border-radius: 8px;
         overflow: hidden;
     }
-
-        .exercicios-table th {
-            background: #2a5298;
-            color: #fff;
-            padding: 12px;
-            text-align: left;
-        }
-
-        .exercicios-table td {
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .exercicios-table tr:hover {
-            background: #f0f4ff;
-        }
+    .exercicios-table th {
+        background: #2a5298;
+        color: #fff;
+        padding: 12px;
+        text-align: left;
+    }
+    .exercicios-table td {
+        padding: 12px;
+        border-bottom: 1px solid #ddd;
+    }
+    .exercicios-table tr:hover {
+        background: #f0f4ff;
+    }
 
     .video-link {
         color: #2a5298;
         font-weight: bold;
         text-decoration: none;
     }
+    .video-link:hover {
+        text-decoration: underline;
+    }
 
-        .video-link:hover {
-            text-decoration: underline;
-        }
+    .btn-delete {
+        padding: 8px 12px;
+        background: #dc3545;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background 0.3s ease;
+    }
+    .btn-delete:hover {
+        background: #a71d2a;
+    }
 </style>
