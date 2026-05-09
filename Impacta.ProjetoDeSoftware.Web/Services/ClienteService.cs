@@ -26,4 +26,14 @@ public class ClienteService
 
         return cliente;
     }
+
+    public async Task<bool> ExcluirCliente(int id)
+    {
+        var cliente = await _context.Cliente.FindAsync(id);
+        if (cliente == null) return false;
+
+        _context.Cliente.Remove(cliente);
+        await _context.SaveChangesAsync();
+        return true;
+    }
 }

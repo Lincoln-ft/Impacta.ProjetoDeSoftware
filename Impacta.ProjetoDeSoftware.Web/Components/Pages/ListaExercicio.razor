@@ -45,7 +45,7 @@
                             <a href="@itemExercicio.LinkVideo" target="_blank" class="video-link">Assistir</a>
                         </td>
                         <td>
-                           <button class="btn-delete" @onclick="() => ExcluirExercicio(itemExercicio.Id)">
+                           <button class="btn-delete" @onclick="() => ConfirmarExclusao(itemExercicio.Id)">
                                 ❌ Excluir
                             </button>
                         </td>
@@ -56,21 +56,49 @@
     }
 </div>
 
+@if (mostrarModal)
+{
+    <div class="modal-overlay">
+        <div class="modal-box">
+            <h3>Confirmar Exclusão</h3>
+            <p>Tem certeza que deseja excluir este exercício?</p>
+            <div class="modal-actions">
+                <button class="btn-confirm" @onclick="ExcluirExercicioConfirmado">Sim, excluir</button>
+                <button class="btn-cancel" @onclick="CancelarExclusao">Cancelar</button>
+            </div>
+        </div>
+    </div>
+}
+
 @code {
     private List<Exercicio> exercicios = new();
+    private bool mostrarModal = false;
+    private int exercicioIdSelecionado;
 
     protected override async Task OnInitializedAsync()
     {
         exercicios = await service.GetExerciciosAsync();
     }
-    
-    private async Task ExcluirExercicio(int id)
+
+    private void ConfirmarExclusao(int id)
     {
-        var sucesso = await service.ExcluirExercicio(id);
+        exercicioIdSelecionado = id;
+        mostrarModal = true;
+    }
+    
+    private async Task ExcluirExercicioConfirmado()
+    {
+        var sucesso = await service.ExcluirExercicio(exercicioIdSelecionado);
         if (sucesso)
         {
-            exercicios = exercicios.Where(e => e.Id != id).ToList();
+            exercicios = exercicios.Where(c => c.Id != exercicioIdSelecionado).ToList();
         }
+        mostrarModal = false;
+    }
+
+    private void CancelarExclusao()
+    {
+        mostrarModal = false;
     }
     
 }
@@ -196,5 +224,66 @@
     }
     .btn-delete:hover {
         background: #a71d2a;
+    }
+
+    /* Estilo do modal */
+    .modal-overlay {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+    }
+
+    .modal-box {
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        width: 320px;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .modal-actions {
+        margin-top: 20px;
+        display: flex;
+        justify-content: space-around;
+    }
+
+    .btn-confirm {
+        padding: 8px 12px;
+        background: #28a745;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .btn-confirm:hover {
+        background: #218838;
+    }
+
+    .btn-cancel {
+        padding: 8px 12px;
+        background: #6c757d;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .btn-cancel:hover {
+        background: #5a6268;
+    }
+
+    @@keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.9); }
+        to { opacity: 1; transform: scale(1); }
     }
 </style>

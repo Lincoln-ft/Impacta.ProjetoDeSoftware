@@ -2,6 +2,7 @@
 @using Impacta.ProjetoDeSoftware.Web.Services
 @using Impacta.ProjetoDeSoftware.Web.Models
 @inject ClienteService clienteService
+@rendermode InteractiveServer
 
 <PageTitle>Lista de Clientes</PageTitle>
 
@@ -33,6 +34,7 @@
                     <th>Nome</th>
                     <th>Email</th>
                     <th>Telefone</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -42,6 +44,11 @@
                         <td>@c.Nome</td>
                         <td>@c.Email</td>
                         <td>@c.Telefone</td>
+                        <td>
+                            <button class="btn-delete" @onclick="() => ConfirmarExclusao(c.Id)">
+                                ❌ Excluir
+                            </button>
+                        </td>
                     </tr>
                 }
             </tbody>
@@ -49,12 +56,49 @@
     }
 </div>
 
+@if (mostrarModal)
+{
+    <div class="modal-overlay">
+        <div class="modal-box">
+            <h3>Confirmar Exclusão</h3>
+            <p>Tem certeza que deseja excluir este cliente?</p>
+            <div class="modal-actions">
+                <button class="btn-confirm" @onclick="ExcluirClienteConfirmado">Sim, excluir</button>
+                <button class="btn-cancel" @onclick="CancelarExclusao">Cancelar</button>
+            </div>
+        </div>
+    </div>
+}
+
 @code {
     private List<Cliente> clientes = new();
+    private bool mostrarModal = false;
+    private int clienteIdSelecionado;
 
     protected override async Task OnInitializedAsync()
     {
         clientes = await clienteService.GetClientesAsync();
+    }
+
+    private void ConfirmarExclusao(int id)
+    {
+        clienteIdSelecionado = id;
+        mostrarModal = true;
+    }
+
+   private async Task ExcluirClienteConfirmado()
+    {
+        var sucesso = await clienteService.ExcluirCliente(clienteIdSelecionado);
+        if (sucesso)
+        {
+            clientes = clientes.Where(c => c.Id != clienteIdSelecionado).ToList();
+        }
+        mostrarModal = false;
+    }
+
+    private void CancelarExclusao()
+    {
+        mostrarModal = false;
     }
 }
 
@@ -123,21 +167,93 @@
         border-radius: 8px;
         overflow: hidden;
     }
+    .clientes-table th {
+        background: #2a5298;
+        color: #fff;
+        padding: 12px;
+        text-align: left;
+    }
+    .clientes-table td {
+        padding: 12px;
+        border-bottom: 1px solid #ddd;
+    }
+    .clientes-table tr:hover {
+        background: #f0f4ff;
+    }
+    
+    .btn-delete {
+        padding: 8px 12px;
+        background: #dc3545;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background 0.3s ease;
+    }
+    .btn-delete:hover {
+        background: #a71d2a;
+    }
 
-        .clientes-table th {
-            background: #2a5298;
-            color: #fff;
-            padding: 12px;
-            text-align: left;
-        }
+    /* Estilo do modal */
+    .modal-overlay {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+    }
 
-        .clientes-table td {
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
-        }
+    .modal-box {
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        width: 320px;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        animation: fadeIn 0.3s ease-in-out;
+    }
 
-        .clientes-table tr:hover {
-            background: #f0f4ff;
-        }
+    .modal-actions {
+        margin-top: 20px;
+        display: flex;
+        justify-content: space-around;
+    }
+
+    .btn-confirm {
+        padding: 8px 12px;
+        background: #28a745;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .btn-confirm:hover {
+        background: #218838;
+    }
+
+    .btn-cancel {
+        padding: 8px 12px;
+        background: #6c757d;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .btn-cancel:hover {
+        background: #5a6268;
+    }
+
+    @@keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.9); }
+        to { opacity: 1; transform: scale(1); }
+    }
 </style>
 
