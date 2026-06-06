@@ -45,6 +45,7 @@
                         <td>@c.Email</td>
                         <td>@c.Telefone</td>
                         <td>
+                            <button class="btn-edit" @onclick="() => AbrirModalEdicao(c)">✏️ Editar</button>
                             <button class="btn-delete" @onclick="() => ConfirmarExclusao(c.Id)">
                                 ❌ Excluir
                             </button>
@@ -56,7 +57,7 @@
     }
 </div>
 
-@if (mostrarModal)
+@if (mostrarModalExclusao)
 {
     <div class="modal-overlay">
         <div class="modal-box">
@@ -70,10 +71,43 @@
     </div>
 }
 
+@if (mostrarModalEdicao)
+{
+    <div class="modal-overlay">
+        <div class="modal-box">
+            <h3>Editar Cliente</h3>
+            <EditForm Model="@clienteEditando" OnValidSubmit="@SalvarEdicao">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="form-group">
+                    <label>Nome:</label>
+                    <InputText @bind-Value="clienteEditando.Nome" class="input-field" />
+                </div>
+                <div class="form-group">
+                    <label>Email:</label>
+                    <InputText @bind-Value="clienteEditando.Email" class="input-field" />
+                </div>
+                <div class="form-group">
+                    <label>Telefone:</label>
+                    <InputText @bind-Value="clienteEditando.Telefone" class="input-field" />
+                </div>
+
+                <div class="modal-actions">
+                    <button type="submit" class="btn-confirm">Salvar</button>
+                    <button type="button" class="btn-cancel" @onclick="CancelarEdicao">Cancelar</button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+}
+
 @code {
     private List<Cliente> clientes = new();
-    private bool mostrarModal = false;
+    private bool mostrarModalExclusao = false;
+    private bool mostrarModalEdicao = false;
     private int clienteIdSelecionado;
+    private Cliente clienteEditando = new Cliente();
 
     protected override async Task OnInitializedAsync()
     {
@@ -83,7 +117,7 @@
     private void ConfirmarExclusao(int id)
     {
         clienteIdSelecionado = id;
-        mostrarModal = true;
+        mostrarModalExclusao = true;
     }
 
    private async Task ExcluirClienteConfirmado()
@@ -93,13 +127,45 @@
         {
             clientes = clientes.Where(c => c.Id != clienteIdSelecionado).ToList();
         }
-        mostrarModal = false;
+        mostrarModalExclusao = false;
     }
 
     private void CancelarExclusao()
     {
-        mostrarModal = false;
+        mostrarModalExclusao = false;
     }
+
+    private void AbrirModalEdicao(Cliente cliente)
+    {
+        clienteEditando = new Cliente
+        {
+            Id = cliente.Id,
+            Nome = cliente.Nome,
+            Email = cliente.Email,
+            Telefone = cliente.Telefone
+        };
+        mostrarModalEdicao = true;
+    }
+
+    private async Task SalvarEdicao()
+    {
+        var atualizado = await clienteService.AtualizarCliente(clienteEditando);
+        if (atualizado != null)
+        {
+            var index = clientes.FindIndex(c => c.Id == atualizado.Id);
+            if (index >= 0)
+            {
+                clientes[index] = atualizado;
+            }
+        }
+        mostrarModalEdicao = false;
+    }
+
+    private void CancelarEdicao()
+    {
+        mostrarModalEdicao = false;
+    }
+
 }
 
 <style>
@@ -249,6 +315,20 @@
 
     .btn-cancel:hover {
         background: #5a6268;
+    }
+
+    .btn-edit {
+        padding: 8px 12px;
+        background: #ffc107;
+        color: #000;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+        margin-right: 5px;
+    }
+    .btn-edit:hover {
+        background: #e0a800;
     }
 
     @@keyframes fadeIn {

@@ -36,4 +36,17 @@ public class ClienteService
         await _context.SaveChangesAsync();
         return true;
     }
+
+    public async Task<Cliente?> AtualizarCliente(Cliente cliente)
+    {
+        var existente = await _context.Cliente.FindAsync(cliente.Id);
+        if (existente == null) return null;
+
+        existente.Nome = cliente.Nome;
+        existente.Email = cliente.Email;
+        existente.Telefone = cliente.Telefone;
+
+        await _context.SaveChangesAsync();
+        return existente;
+    }
 }
